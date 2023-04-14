@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LocalAuthentication
 
 extension FileManager {
     static var documentDirectory: URL {
@@ -29,6 +30,8 @@ struct ContentView: View {
     
     
     @State private var showingAlert = false
+    
+    @State private var isUnlocked = false
     
     @Environment(\.colorScheme) var colorScheme
         
@@ -133,8 +136,10 @@ struct ContentView: View {
                         }
                     }
                     Button("Delete", action: {showingAlert = true})
-                    Button("Option 3") {
-                        // Do something
+                    Button{
+                        authenticate()
+                    }label:{
+                        isUnlocked ? Text("Unlocked") : Text("Locked")
                     }
                 }label: {
                     Image(systemName: "line.3.horizontal")
@@ -154,6 +159,25 @@ struct ContentView: View {
     func delete(){
         newlists.removeAll()
         save()
+    }
+    func authenticate(){
+        let context = LAContext()
+        var error: NSError?
+        
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error){
+            let reason = "We need to unlock Private Item List"
+            
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason){success , authenticatioError in
+                if success{
+                    isUnlocked = true
+                }else{
+                    
+                }
+            }
+        }
+        else{
+            //No biometrics
+        }
     }
 }
 

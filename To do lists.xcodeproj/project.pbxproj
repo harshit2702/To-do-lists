@@ -20,6 +20,7 @@
 		B15A5EE529E955E40016BF84 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B15A5EE729E955E40016BF84 /* To_do_lists.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = To_do_lists.entitlements; sourceTree = "<group>"; };
 		B15A5EE929E955E40016BF84 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B15A5EF029EA07FC0016BF84 /* To-do-lists-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "To-do-lists-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +53,7 @@
 		B15A5EE029E955E20016BF84 /* To do lists */ = {
 			isa = PBXGroup;
 			children = (
+				B15A5EF029EA07FC0016BF84 /* To-do-lists-Info.plist */,
 				B15A5EE129E955E20016BF84 /* To_do_listsApp.swift */,
 				B15A5EE329E955E20016BF84 /* ContentView.swift */,
 				B15A5EE529E955E40016BF84 /* Assets.xcassets */,
@@ -269,6 +271,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "To-do-lists-Info.plist";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We need to unlock Private Item List";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -307,6 +311,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "To-do-lists-Info.plist";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We need to unlock Private Item List";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
