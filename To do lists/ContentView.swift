@@ -27,6 +27,9 @@ struct ContentView: View {
     @State private var newItems = ""
     @State private var isPresented = false
     
+    
+    @State private var showingAlert = false
+    
     @Environment(\.colorScheme) var colorScheme
         
     let savedPath = FileManager.documentDirectory.appendingPathComponent("SavedItems")
@@ -110,16 +113,26 @@ struct ContentView: View {
             }
             .toolbar(){
                 Menu{
-                    Button(colorScheme == .light ? "Light" : "Dark") {
+                    Button{
                         if colorScheme == .light {
                             UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .dark
                         } else {
                             UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .light
                         }
+                    }label: {
+                        if(colorScheme == .light) {
+                            HStack{
+                                Text("Light" )
+                                Image(systemName: "sun.max.circle")
+                            }
+                        } else{
+                            HStack{
+                                Text("Dark")
+                                Image(systemName: "moon.circle")
+                            }
+                        }
                     }
-                    Button("Option 2") {
-                        // Do something
-                    }
+                    Button("Delete", action: {showingAlert = true})
                     Button("Option 3") {
                         // Do something
                     }
@@ -128,6 +141,9 @@ struct ContentView: View {
                         .font(.title)
                         .clipShape(RoundedRectangle(cornerRadius: 15.0))
                 }
+                .alert(isPresented: $showingAlert) {
+                    Alert(title: Text("Confirm Delete"), message: Text("Are you sure you want to delete?"), primaryButton: .destructive(Text("Delete"), action: delete), secondaryButton: .cancel())
+                }
             }
         }
     }
@@ -135,6 +151,10 @@ struct ContentView: View {
             newlists.remove(atOffsets: offsets)
             save()
         }
+    func delete(){
+        newlists.removeAll()
+        save()
+    }
 }
 
 
