@@ -135,8 +135,9 @@ struct ContentView: View {
             newlists.remove(atOffsets: offsets)
             save()
         }
-}       }
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
