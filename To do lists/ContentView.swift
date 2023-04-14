@@ -15,7 +15,7 @@ extension FileManager {
 }
 
 struct ContentView: View {
-    struct newLists: Identifiable{
+    struct newLists: Identifiable,Encodable, Decodable{
         var id = UUID()
         let name: String
         let Itemtype: String                    //    ["Normal","Private"]
@@ -24,21 +24,17 @@ struct ContentView: View {
     @State private var newlists = [newLists]()
     @State private var _type = "Normal"
     let types = ["Normal","Private"]
-    
-    @State private var lists: [String] = []
     @State private var newItems = ""
     @State private var isPresented = false
     
     @Environment(\.colorScheme) var colorScheme
-    
-    @State private var isOn = false
-    
+        
     let savedPath = FileManager.documentDirectory.appendingPathComponent("SavedItems")
     
     func save(){
         do {
-            let data = try JSONEncoder().encode(lists)
-            try data.write(to: savedPath, options: [.completeFileProtection])
+            let data = try JSONEncoder().encode(newlists)
+            try data.write(to: savedPath, options: [.completeFileProtection,.atomic])
         }catch{
             print("Unable to save data")
         }
@@ -47,20 +43,20 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             ZStack {
-                VStack{
-                    Text("To do list")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-                        .padding(.all)
                     List{
-                        ForEach(lists, id: \.self){
-                            Text($0)
+                        ForEach(newlists){ list in
+                            HStack {
+                                Text(list.name)
+                                    .font(.title)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Text(list.Itemtype)
+                                    .fontWeight(.bold)
+                            }
                         }
                         .onDelete(perform: deleteItems)
                     }
                     
-                }
                 
                 VStack{
                     Spacer()
@@ -81,7 +77,8 @@ struct ContentView: View {
                 }
                 
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("To do list")
+            .navigationBarTitleDisplayMode(.automatic)
             .sheet(isPresented: $isPresented){
                 Form {
                     TextField("Enter Items",text: $newItems)
@@ -94,7 +91,8 @@ struct ContentView: View {
                 }
                 if(newItems != ""){
                     Button("save"){
-                        lists.append(newItems)
+                        let item = newLists(name: newItems, Itemtype: _type)
+                        newlists.append(item)
                         save()
                         isPresented.toggle()
                         newItems = ""
@@ -105,7 +103,7 @@ struct ContentView: View {
             .onAppear {
                 do {
                     let data = try Data(contentsOf: savedPath)
-                    lists = try JSONDecoder().decode([String].self, from: data)
+                    newlists = try JSONDecoder().decode([newLists].self, from: data)
                 } catch {
                     print("Error loading data: \(error)")
                 }
@@ -134,7 +132,7 @@ struct ContentView: View {
         }
     }
     func deleteItems(at offsets: IndexSet) {
-            lists.remove(atOffsets: offsets)
+            newlists.remove(atOffsets: offsets)
             save()
         }
 }
