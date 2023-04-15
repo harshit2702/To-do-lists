@@ -8,20 +8,8 @@
 import SwiftUI
 import LocalAuthentication
 
-extension FileManager {
-    static var documentDirectory: URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
-    }
-}
-
 struct ContentView: View {
-    struct newLists: Identifiable,Encodable, Decodable{
-        var id = UUID()
-        let name: String
-        let isprivate: Bool
-    }
-    
+
     @State private var newlists = [newLists]()
     @State private var newItems = ""
     @State private var _isprivate = false
@@ -49,22 +37,8 @@ struct ContentView: View {
         NavigationView{
             ZStack {
                     List{
-                        ForEach(newlists){ list in
-                            if(isUnlocked == false ){
-                                if(list.isprivate == false){
-                                    HStack {
-                                        Text(list.name)
-                                            .font(.title)
-                                            .fontWeight(.medium)
-                                        Spacer()
-                                        if(list.isprivate){
-                                            Text("Private")
-                                                .fontWeight(.bold)
-                                        }
-                                    }
-                                }
-                            }
-                            else{
+                        ForEach(newlists) { list in
+                            if(isUnlocked || !list.isprivate) {
                                 HStack {
                                     Text(list.name)
                                         .font(.title)
@@ -78,6 +52,9 @@ struct ContentView: View {
                             }
                         }
                         .onDelete(perform: deleteItems)
+                    }
+                    .onTapGesture{
+                        isPresented = true
                     }
                     
                 
@@ -103,22 +80,27 @@ struct ContentView: View {
             .navigationTitle("To do list")
             .navigationBarTitleDisplayMode(.automatic)
             .sheet(isPresented: $isPresented){
-                Form {
-                    TextField("Enter Items",text: $newItems)
-                    Toggle(isOn: $_isprivate){
-                        Text("Private item")
+                NavigationView {
+                    VStack{
+                        Form {
+                            TextField("Enter Items",text: $newItems)
+                            Toggle(isOn: $_isprivate){
+                                Text("Private item")
+                            }
+                            .toggleStyle(SwitchToggleStyle(tint: .blue))
+                        }
+                        if(newItems != ""){
+                            Button("save"){
+                                let item = newLists(name: newItems, isprivate: _isprivate)
+                                newlists.insert(item, at: newlists.startIndex)
+                                save()
+                                isPresented.toggle()
+                                newItems = ""
+                                
+                            }
+                        }
                     }
-                    .toggleStyle(SwitchToggleStyle(tint: .blue))
-                }
-                if(newItems != ""){
-                    Button("save"){
-                        let item = newLists(name: newItems, isprivate: _isprivate)
-                        newlists.insert(item, at: newlists.startIndex)
-                        save()
-                        isPresented.toggle()
-                        newItems = ""
-                        
-                    }
+                    .navigationBarTitle("Items")
                 }
                 
             }
@@ -152,12 +134,6 @@ struct ContentView: View {
                         }
                     }
                     Button{
-                        showingAlert = true
-                    }label:{
-                        Text("Delete")
-                        Image(systemname: "multiply.circle")
-                    }
-                    Button{
                         authenticate()
                     }label:{
                         isUnlocked ? HStack {
@@ -166,6 +142,14 @@ struct ContentView: View {
                         } : HStack {
                             Text("Locked")
                             Image(systemName: "lock.fill")
+                        }
+                    }
+                    Button{
+                        showingAlert = true
+                    }label:{
+                        HStack {
+                            Text("Delete")
+                            Image(systemName: "multiply.circle")
                         }
                     }
                 }label: {

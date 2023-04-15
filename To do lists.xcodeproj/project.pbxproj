@@ -11,6 +11,8 @@
 		B15A5EE429E955E20016BF84 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A5EE329E955E20016BF84 /* ContentView.swift */; };
 		B15A5EE629E955E40016BF84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B15A5EE529E955E40016BF84 /* Assets.xcassets */; };
 		B15A5EEA29E955E40016BF84 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B15A5EE929E955E40016BF84 /* Preview Assets.xcassets */; };
+		B15A5EF629EACBCF0016BF84 /* FileManager - document directory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A5EF529EACBCF0016BF84 /* FileManager - document directory.swift */; };
+		B15A5EF829EACC6A0016BF84 /* newLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A5EF729EACC6A0016BF84 /* newLists.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +23,8 @@
 		B15A5EE729E955E40016BF84 /* To_do_lists.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = To_do_lists.entitlements; sourceTree = "<group>"; };
 		B15A5EE929E955E40016BF84 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B15A5EF029EA07FC0016BF84 /* To-do-lists-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "To-do-lists-Info.plist"; sourceTree = SOURCE_ROOT; };
+		B15A5EF529EACBCF0016BF84 /* FileManager - document directory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager - document directory.swift"; sourceTree = "<group>"; };
+		B15A5EF729EACC6A0016BF84 /* newLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = newLists.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,8 @@
 				B15A5EF029EA07FC0016BF84 /* To-do-lists-Info.plist */,
 				B15A5EE129E955E20016BF84 /* To_do_listsApp.swift */,
 				B15A5EE329E955E20016BF84 /* ContentView.swift */,
+				B15A5EF729EACC6A0016BF84 /* newLists.swift */,
+				B15A5EF529EACBCF0016BF84 /* FileManager - document directory.swift */,
 				B15A5EE529E955E40016BF84 /* Assets.xcassets */,
 				B15A5EE729E955E40016BF84 /* To_do_lists.entitlements */,
 				B15A5EE829E955E40016BF84 /* Preview Content */,
@@ -141,7 +147,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B15A5EF629EACBCF0016BF84 /* FileManager - document directory.swift in Sources */,
 				B15A5EE429E955E20016BF84 /* ContentView.swift in Sources */,
+				B15A5EF829EACC6A0016BF84 /* newLists.swift in Sources */,
 				B15A5EE229E955E20016BF84 /* To_do_listsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
