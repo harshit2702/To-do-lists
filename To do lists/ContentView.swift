@@ -19,13 +19,12 @@ struct ContentView: View {
     struct newLists: Identifiable,Encodable, Decodable{
         var id = UUID()
         let name: String
-        let Itemtype: String                    //    ["Normal","Private"]
+        let isprivate: Bool
     }
     
     @State private var newlists = [newLists]()
-    @State private var _type = "Normal"
-    let types = ["Normal","Private"]
     @State private var newItems = ""
+    @State private var _isprivate = false
     @State private var isPresented = false
     
     
@@ -51,13 +50,31 @@ struct ContentView: View {
             ZStack {
                     List{
                         ForEach(newlists){ list in
-                            HStack {
-                                Text(list.name)
-                                    .font(.title)
-                                    .fontWeight(.medium)
-                                Spacer()
-                                Text(list.Itemtype)
-                                    .fontWeight(.bold)
+                            if(isUnlocked == false ){
+                                if(list.isprivate == false){
+                                    HStack {
+                                        Text(list.name)
+                                            .font(.title)
+                                            .fontWeight(.medium)
+                                        Spacer()
+                                        if(list.isprivate){
+                                            Text("Private")
+                                                .fontWeight(.bold)
+                                        }
+                                    }
+                                }
+                            }
+                            else{
+                                HStack {
+                                    Text(list.name)
+                                        .font(.title)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    if(list.isprivate){
+                                        Text("Private")
+                                            .fontWeight(.bold)
+                                    }
+                                }
                             }
                         }
                         .onDelete(perform: deleteItems)
@@ -88,23 +105,22 @@ struct ContentView: View {
             .sheet(isPresented: $isPresented){
                 Form {
                     TextField("Enter Items",text: $newItems)
-                    Picker("Types", selection: $_type){
-                        ForEach(types , id: \.self){
-                            Text($0)
-                        }
+                    Toggle(isOn: $_isprivate){
+                        Text("Private item")
                     }
-                    .pickerStyle(SegmentedPickerStyle())
+                    .toggleStyle(SwitchToggleStyle(tint: .blue))
                 }
                 if(newItems != ""){
                     Button("save"){
-                        let item = newLists(name: newItems, Itemtype: _type)
-                        newlists.append(item)
+                        let item = newLists(name: newItems, isprivate: _isprivate)
+                        newlists.insert(item, at: newlists.startIndex)
                         save()
                         isPresented.toggle()
                         newItems = ""
                         
                     }
                 }
+                
             }
             .onAppear {
                 do {
@@ -135,11 +151,22 @@ struct ContentView: View {
                             }
                         }
                     }
-                    Button("Delete", action: {showingAlert = true})
+                    Button{
+                        showingAlert = true
+                    }label:{
+                        Text("Delete")
+                        Image(systemname: "multiply.circle")
+                    }
                     Button{
                         authenticate()
                     }label:{
-                        isUnlocked ? Text("Unlocked") : Text("Locked")
+                        isUnlocked ? HStack {
+                            Text("Unlocked")
+                            Image(systemName: "lock.open")
+                        } : HStack {
+                            Text("Locked")
+                            Image(systemName: "lock.fill")
+                        }
                     }
                 }label: {
                     Image(systemName: "line.3.horizontal")
