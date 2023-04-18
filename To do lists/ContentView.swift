@@ -40,9 +40,15 @@ struct ContentView: View {
                         ForEach(newlists) { list in
                             if(isUnlocked || !list.isprivate) {
                                 HStack {
-                                    Text(list.name)
-                                        .font(.title)
-                                        .fontWeight(.medium)
+                                    VStack {
+                                        Text(list.name)
+                                            .font(.title)
+                                            .fontWeight(.medium)
+                                        Text(list.date.formatted(.dateTime
+                                            .month(.abbreviated)
+                                            .day(.twoDigits)))
+                                        
+                                    }
                                     Spacer()
                                     if(list.isprivate){
                                         Text("Private")
@@ -91,16 +97,17 @@ struct ContentView: View {
                         }
                         if(newItems != ""){
                             Button("save"){
-                                let item = newLists(name: newItems, isprivate: _isprivate)
+                                let item = newLists(name: newItems, isprivate: _isprivate, date: Date())
                                 newlists.insert(item, at: newlists.startIndex)
                                 save()
                                 isPresented.toggle()
                                 newItems = ""
+                                _isprivate = false
                                 
                             }
                         }
                     }
-                    .navigationBarTitle("Items")
+                    .navigationBarTitle("Tasks")
                 }
                 
             }
