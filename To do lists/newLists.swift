@@ -8,7 +8,7 @@
 import Foundation
 
 struct newLists: Identifiable,Encodable, Decodable{
-    var id = UUID()
+    let id = UUID()
     let name: String
     let isprivate: Bool
     let date: Date

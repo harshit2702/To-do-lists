@@ -20,6 +20,8 @@ struct ContentView: View {
     
     @State private var isUnlocked = false
     
+    @State private var isSortByDate = false
+    
     @Environment(\.colorScheme) var colorScheme
         
     let savedPath = FileManager.documentDirectory.appendingPathComponent("SavedItems")
@@ -36,6 +38,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             ZStack {
+                if(!isSortByDate){
                     List{
                         ForEach(newlists) { list in
                             if(isUnlocked || !list.isprivate) {
@@ -44,9 +47,11 @@ struct ContentView: View {
                                         Text(list.name)
                                             .font(.title)
                                             .fontWeight(.medium)
+                                        
                                         Text(list.date.formatted(.dateTime
                                             .month(.abbreviated)
                                             .day(.twoDigits)))
+                                        .multilineTextAlignment(.leading)
                                         
                                     }
                                     Spacer()
@@ -62,7 +67,30 @@ struct ContentView: View {
                     .onTapGesture{
                         isPresented = true
                     }
-                    
+
+                }else{
+                    List{
+                        ForEach(sortedItems(), id: \.date){ section in
+                            Section(header: Text(section.date, style: .date)){
+                                ForEach(section.lists){ list in
+                                    if(isUnlocked || !list.isprivate) {
+                                        HStack {
+                                            VStack {
+                                                Text(list.name)
+                                            }
+                                            Spacer()
+                                            if(list.isprivate){
+                                                Text("Private")
+                                                    .fontWeight(.bold)
+                                            }
+                                        }
+                                    }
+                                }
+                                .onDelete(perform: deleteItems)
+                            }
+                        }.listStyle(GroupedListStyle())
+                    }
+                }
                 
                 VStack{
                     Spacer()
@@ -152,6 +180,11 @@ struct ContentView: View {
                         }
                     }
                     Button{
+                        isSortByDate.toggle()
+                    }label: {
+                        Text("Sort by date")
+                    }
+                    Button{
                         showingAlert = true
                     }label:{
                         HStack {
@@ -178,6 +211,16 @@ struct ContentView: View {
         newlists.removeAll()
         save()
     }
+    func sortedItems() -> [(date: Date, lists: [newLists])] {
+        let groupedItems = Dictionary(grouping: newlists){list in
+            Calendar.current.startOfDay(for: list.date)
+            
+        }
+        let sortedKeys = groupedItems.keys.sorted(by: >)
+        return sortedKeys.map{key in
+            (date: key,lists: groupedItems[key]!)
+        }
+}
     func authenticate(){
         let context = LAContext()
         var error: NSError?
