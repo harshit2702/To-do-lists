@@ -12,6 +12,7 @@ struct ContentView: View {
 
     @State private var newlists = [newLists]()
     @State private var newItems = ""
+    @State private var unfilteredItemList = [newLists]()
     @State private var _isprivate = false
     @State private var isPresented = false
     @State private var selectedTag: newLists.tag = .none
@@ -41,7 +42,7 @@ struct ContentView: View {
             ZStack {
                 if(!isSortByDate){
                     List{
-                        ForEach(newlists) { list in
+                        ForEach(unfilteredItemList) { list in
                             if(isUnlocked || !list.isprivate) {
                                 HStack {
                                     if list.tag != newLists.tag.none {
@@ -196,9 +197,14 @@ struct ContentView: View {
                 do {
                     let data = try Data(contentsOf: savedPath)
                     newlists = try JSONDecoder().decode([newLists].self, from: data)
+                    unfilteredItemList = newlists
                 } catch {
                     print("Error loading data: \(error)")
                 }
+            }
+            .onChange(of: selectedSortTag) { _ in
+                unfilteredItemList = newlists
+                sortTasks()
             }
             .toolbar(){
                 Menu{
@@ -248,6 +254,10 @@ struct ContentView: View {
                                 selectedSortTag = tag
                             }
                         }
+                        Button("Nil"){
+                            selectedSortTag = nil
+                            unfilteredItemList = newlists
+                        }
                     }label:{
                         Text("Sort By Tag")
                     }
@@ -288,6 +298,11 @@ struct ContentView: View {
             (date: key,lists: groupedItems[key]!)
         }
 }
+    func sortTasks() {
+            if let selectedSortTag = selectedSortTag {
+                unfilteredItemList = newlists.filter { $0.tag == selectedSortTag }
+            }
+        }
     func authenticate(){
         let context = LAContext()
         var error: NSError?
