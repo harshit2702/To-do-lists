@@ -7,9 +7,30 @@
 
 import Foundation
 
-struct newLists: Identifiable,Encodable, Decodable{
-    let id = UUID()
+
+struct newLists: Identifiable, Encodable, Decodable{
+    var id = UUID()
     let name: String
     let isprivate: Bool
     let date: Date
+    var tag: tag
+    
+    enum tag: String, CaseIterable,Codable{
+        case red,orange,yellow,green,blue,purple,grey,none
+        
+        var color: String {
+                    switch self {
+                        case .red: return "red"
+                        case .orange: return "orange"
+                        case .yellow: return "yellow"
+                        case .green: return "green"
+                        case .blue: return "blue"
+                        case .purple: return "purple"
+                        case .grey: return "grey"
+                        case .none: return "none"
+                    }
+                }
+        
+    }
 }
+

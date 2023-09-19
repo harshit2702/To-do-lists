@@ -14,13 +14,14 @@ struct ContentView: View {
     @State private var newItems = ""
     @State private var _isprivate = false
     @State private var isPresented = false
-    
-    
+    @State private var selectedTag: newLists.tag = .none
+
     @State private var showingAlert = false
     
     @State private var isUnlocked = false
     
     @State private var isSortByDate = false
+    @State private var selectedSortTag: newLists.tag? = nil
     
     @Environment(\.colorScheme) var colorScheme
         
@@ -36,14 +37,31 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationView{
+        NavigationStack{
             ZStack {
                 if(!isSortByDate){
                     List{
                         ForEach(newlists) { list in
                             if(isUnlocked || !list.isprivate) {
                                 HStack {
-                                    VStack {
+                                    if list.tag != newLists.tag.none {
+                                        Circle()
+                                            .fill(Color(list.tag.rawValue))
+                                            .frame(width: 20, height: 20)
+                                            }
+                                    else{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 20.0)
+                                                .foregroundColor(.black)
+                                            Circle()
+                                                .frame(width: 17.0)
+                                                .foregroundColor(.white)
+                                        }
+                                    }
+                                    
+                        
+                                    VStack(alignment: .leading) {
                                         Text(list.name)
                                             .font(.title)
                                             .fontWeight(.medium)
@@ -90,6 +108,9 @@ struct ContentView: View {
                             }
                         }.listStyle(GroupedListStyle())
                     }
+                    .onTapGesture{
+                        isPresented = true
+                    }
                 }
                 
                 VStack{
@@ -118,19 +139,51 @@ struct ContentView: View {
                     VStack{
                         Form {
                             TextField("Enter Items",text: $newItems)
-                            Toggle(isOn: $_isprivate){
-                                Text("Private item")
+                            
+                            Section("Privacy"){
+                                Toggle(isOn: $_isprivate){
+                                    Text("Private item")
+                                }
+                                .toggleStyle(SwitchToggleStyle(tint: .blue))
                             }
-                            .toggleStyle(SwitchToggleStyle(tint: .blue))
+                            
+                            Section("Tag"){
+                                Picker("Select Tag", selection: $selectedTag) {
+                                    ForEach(newLists.tag.allCases, id: \.self) { tag in
+                                        HStack(alignment: .center){
+                                            if tag != newLists.tag.none {
+                                                Circle()
+                                                    .fill(Color(tag.rawValue))
+                                                    .frame(width: 20, height: 20)
+                                            }
+                                            else{
+                                                ZStack{
+                                                    Circle()
+                                                        .frame(width: 20.0)
+                                                        .foregroundColor(.black)
+                                                    Circle()
+                                                        .frame(width: 17.0)
+                                                        .foregroundColor(.white)
+                                                }
+                                            }
+                                            Text(tag.rawValue)
+                                                .tag(tag) // Assign the tag as the value
+                                        }
+                                    }
+                                }
+                                .pickerStyle(WheelPickerStyle()) 
+                            }
+
                         }
                         if(newItems != ""){
                             Button("save"){
-                                let item = newLists(name: newItems, isprivate: _isprivate, date: Date())
+                                let item = newLists(name: newItems, isprivate: _isprivate, date: Date(), tag: selectedTag)
                                 newlists.insert(item, at: newlists.startIndex)
                                 save()
                                 isPresented.toggle()
                                 newItems = ""
                                 _isprivate = false
+                                selectedTag = .none
                                 
                             }
                         }
@@ -182,7 +235,21 @@ struct ContentView: View {
                     Button{
                         isSortByDate.toggle()
                     }label: {
-                        Text("Sort by date")
+                        HStack {
+                            Text("Sort by date")
+                            if(isSortByDate){
+                                Image(systemName: "checkmark" )
+                            }
+                        }
+                    }
+                    Menu{
+                        ForEach(newLists.tag.allCases, id: \.self) { tag in
+                            Button("\(tag.rawValue)"){
+                                selectedSortTag = tag
+                            }
+                        }
+                    }label:{
+                        Text("Sort By Tag")
                     }
                     Button{
                         showingAlert = true
