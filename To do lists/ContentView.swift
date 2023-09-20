@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var _isprivate = false
     @State private var isPresented = false
     @State private var selectedTag: newLists.tag = .none
+    @State private var toggleSwitch = false
 
     @State private var showingAlert = false
     
@@ -185,6 +186,7 @@ struct ContentView: View {
                                 newItems = ""
                                 _isprivate = false
                                 selectedTag = .none
+                                toggleSwitch.toggle()
                                 
                             }
                         }
@@ -194,6 +196,15 @@ struct ContentView: View {
                 
             }
             .onAppear {
+                do {
+                    let data = try Data(contentsOf: savedPath)
+                    newlists = try JSONDecoder().decode([newLists].self, from: data)
+                    unfilteredItemList = newlists
+                } catch {
+                    print("Error loading data: \(error)")
+                }
+            }
+            .onChange(of: toggleSwitch){_ in
                 do {
                     let data = try Data(contentsOf: savedPath)
                     newlists = try JSONDecoder().decode([newLists].self, from: data)
@@ -283,10 +294,12 @@ struct ContentView: View {
     func deleteItems(at offsets: IndexSet) {
             newlists.remove(atOffsets: offsets)
             save()
+            toggleSwitch.toggle()
         }
     func delete(){
         newlists.removeAll()
         save()
+        toggleSwitch.toggle()
     }
     func sortedItems() -> [(date: Date, lists: [newLists])] {
         let groupedItems = Dictionary(grouping: newlists){list in
@@ -299,10 +312,12 @@ struct ContentView: View {
         }
 }
     func sortTasks() {
+        if selectedSortTag != nil{
             if let selectedSortTag = selectedSortTag {
                 unfilteredItemList = newlists.filter { $0.tag == selectedSortTag }
             }
         }
+    }
     func authenticate(){
         let context = LAContext()
         var error: NSError?
