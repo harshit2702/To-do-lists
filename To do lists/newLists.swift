@@ -37,6 +37,7 @@ struct newLists: Identifiable, Encodable, Decodable{
 let savedPath = FileManager.documentDirectory.appendingPathComponent("SavedItems")
 
 
+
 func save(_ list: [newLists]){
     do {
         let data = try JSONEncoder().encode(list)
