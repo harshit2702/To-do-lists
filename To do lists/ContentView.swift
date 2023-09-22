@@ -11,11 +11,8 @@ import LocalAuthentication
 struct ContentView: View {
 
     @State private var newlists = [newLists]()
-    @State private var newItems = ""
     @State private var unfilteredItemList = [newLists]()
-    @State private var _isprivate = false
     @State private var isPresented = false
-    @State private var selectedTag: newLists.tag = .none
     @State private var toggleSwitch = false
 
     @State private var showingAlert = false
@@ -27,92 +24,13 @@ struct ContentView: View {
     
     @Environment(\.colorScheme) var colorScheme
         
-    let savedPath = FileManager.documentDirectory.appendingPathComponent("SavedItems")
-    
-    func save(){
-        do {
-            let data = try JSONEncoder().encode(newlists)
-            try data.write(to: savedPath, options: [.completeFileProtection,.atomic])
-        }catch{
-            print("Unable to save data")
-        }
-    }
-    
     var body: some View {
         NavigationStack{
             ZStack {
                 if(!isSortByDate){
-                    List{
-                        ForEach(unfilteredItemList) { list in
-                            if(isUnlocked || !list.isprivate) {
-                                HStack {
-                                    if list.tag != newLists.tag.none {
-                                        Circle()
-                                            .fill(Color(list.tag.rawValue))
-                                            .frame(width: 20, height: 20)
-                                            }
-                                    else{
-                                        ZStack{
-                                            Circle()
-                                                .frame(width: 20.0)
-                                                .foregroundColor(.black)
-                                            Circle()
-                                                .frame(width: 17.0)
-                                                .foregroundColor(.white)
-                                        }
-                                    }
-                                    
-                        
-                                    VStack(alignment: .leading) {
-                                        Text(list.name)
-                                            .font(.title)
-                                            .fontWeight(.medium)
-                                        
-                                        Text(list.date.formatted(.dateTime
-                                            .month(.abbreviated)
-                                            .day(.twoDigits)))
-                                        .multilineTextAlignment(.leading)
-                                        
-                                    }
-                                    Spacer()
-                                    if(list.isprivate){
-                                        Text("Private")
-                                            .fontWeight(.bold)
-                                    }
-                                }
-                            }
-                        }
-                        .onDelete(perform: deleteItems)
-                    }
-                    .onTapGesture{
-                        isPresented = true
-                    }
-
+                    ListView(newlists: $newlists, isUnlocked: $isUnlocked)
                 }else{
-                    List{
-                        ForEach(sortedItems(), id: \.date){ section in
-                            Section(header: Text(section.date, style: .date)){
-                                ForEach(section.lists){ list in
-                                    if(isUnlocked || !list.isprivate) {
-                                        HStack {
-                                            VStack {
-                                                Text(list.name)
-                                            }
-                                            Spacer()
-                                            if(list.isprivate){
-                                                Text("Private")
-                                                    .fontWeight(.bold)
-                                            }
-                                        }
-                                    }
-                                }
-                                .onDelete(perform: deleteItems)
-                            }
-                        }.listStyle(GroupedListStyle())
-                    }
-                    .onTapGesture{
-                        isPresented = true
-                    }
+                    ListViewByDate(newlists: $newlists, isUnlocked: $isUnlocked)
                 }
                 
                 VStack{
@@ -135,65 +53,11 @@ struct ContentView: View {
                 
             }
             .navigationTitle("To do list")
-            .navigationBarTitleDisplayMode(.automatic)
             .sheet(isPresented: $isPresented){
-                NavigationView {
-                    VStack{
-                        Form {
-                            TextField("Enter Items",text: $newItems)
-                            
-                            Section("Privacy"){
-                                Toggle(isOn: $_isprivate){
-                                    Text("Private item")
-                                }
-                                .toggleStyle(SwitchToggleStyle(tint: .blue))
-                            }
-                            
-                            Section("Tag"){
-                                Picker("Select Tag", selection: $selectedTag) {
-                                    ForEach(newLists.tag.allCases, id: \.self) { tag in
-                                        HStack(alignment: .center){
-                                            if tag != newLists.tag.none {
-                                                Circle()
-                                                    .fill(Color(tag.rawValue))
-                                                    .frame(width: 20, height: 20)
-                                            }
-                                            else{
-                                                ZStack{
-                                                    Circle()
-                                                        .frame(width: 20.0)
-                                                        .foregroundColor(.black)
-                                                    Circle()
-                                                        .frame(width: 17.0)
-                                                        .foregroundColor(.white)
-                                                }
-                                            }
-                                            Text(tag.rawValue)
-                                                .tag(tag) // Assign the tag as the value
-                                        }
-                                    }
-                                }
-                                .pickerStyle(WheelPickerStyle()) 
-                            }
-
-                        }
-                        if(newItems != ""){
-                            Button("save"){
-                                let item = newLists(name: newItems, isprivate: _isprivate, date: Date(), tag: selectedTag)
-                                newlists.insert(item, at: newlists.startIndex)
-                                save()
-                                isPresented.toggle()
-                                newItems = ""
-                                _isprivate = false
-                                selectedTag = .none
-                                toggleSwitch.toggle()
-                                
-                            }
-                        }
-                    }
-                    .navigationBarTitle("Tasks")
-                }
-                
+                addItemView(isPresented: $isPresented)
+            }
+            .onTapGesture{
+                isPresented = true
             }
             .onAppear {
                 do {
@@ -204,7 +68,16 @@ struct ContentView: View {
                     print("Error loading data: \(error)")
                 }
             }
-            .onChange(of: toggleSwitch){_ in
+            .onChange(of: toggleSwitch){ _ in
+                do {
+                    let data = try Data(contentsOf: savedPath)
+                    newlists = try JSONDecoder().decode([newLists].self, from: data)
+                    unfilteredItemList = newlists
+                } catch {
+                    print("Error loading data: \(error)")
+                }
+            }
+            .onChange(of: isPresented){ _ in
                 do {
                     let data = try Data(contentsOf: savedPath)
                     newlists = try JSONDecoder().decode([newLists].self, from: data)
@@ -292,25 +165,16 @@ struct ContentView: View {
         }
     }
     func deleteItems(at offsets: IndexSet) {
-            newlists.remove(atOffsets: offsets)
-            save()
-            toggleSwitch.toggle()
+        newlists.remove(atOffsets: offsets)
+        save(newlists)
+        toggleSwitch.toggle()
         }
     func delete(){
         newlists.removeAll()
-        save()
+        save(newlists)
         toggleSwitch.toggle()
     }
-    func sortedItems() -> [(date: Date, lists: [newLists])] {
-        let groupedItems = Dictionary(grouping: newlists){list in
-            Calendar.current.startOfDay(for: list.date)
-            
-        }
-        let sortedKeys = groupedItems.keys.sorted(by: >)
-        return sortedKeys.map{key in
-            (date: key,lists: groupedItems[key]!)
-        }
-}
+
     func sortTasks() {
         if selectedSortTag != nil{
             if let selectedSortTag = selectedSortTag {
