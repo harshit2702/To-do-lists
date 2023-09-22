@@ -13,6 +13,10 @@
 		B15A5EEA29E955E40016BF84 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B15A5EE929E955E40016BF84 /* Preview Assets.xcassets */; };
 		B15A5EF629EACBCF0016BF84 /* FileManager - document directory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A5EF529EACBCF0016BF84 /* FileManager - document directory.swift */; };
 		B15A5EF829EACC6A0016BF84 /* newLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15A5EF729EACC6A0016BF84 /* newLists.swift */; };
+		B1AAF21D2ABD22B1001CC90A /* SortingFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AAF21C2ABD22B1001CC90A /* SortingFunction.swift */; };
+		B1AAF21F2ABD2A2C001CC90A /* addItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AAF21E2ABD2A2B001CC90A /* addItemView.swift */; };
+		B1AAF2212ABD3DBF001CC90A /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AAF2202ABD3DBE001CC90A /* ListView.swift */; };
+		B1AAF2232ABD432B001CC90A /* ListViewByDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AAF2222ABD432B001CC90A /* ListViewByDate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +29,10 @@
 		B15A5EF029EA07FC0016BF84 /* To-do-lists-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "To-do-lists-Info.plist"; sourceTree = SOURCE_ROOT; };
 		B15A5EF529EACBCF0016BF84 /* FileManager - document directory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager - document directory.swift"; sourceTree = "<group>"; };
 		B15A5EF729EACC6A0016BF84 /* newLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = newLists.swift; sourceTree = "<group>"; };
+		B1AAF21C2ABD22B1001CC90A /* SortingFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingFunction.swift; sourceTree = "<group>"; };
+		B1AAF21E2ABD2A2B001CC90A /* addItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addItemView.swift; sourceTree = "<group>"; };
+		B1AAF2202ABD3DBE001CC90A /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
+		B1AAF2222ABD432B001CC90A /* ListViewByDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewByDate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +67,11 @@
 			children = (
 				B15A5EF029EA07FC0016BF84 /* To-do-lists-Info.plist */,
 				B15A5EE129E955E20016BF84 /* To_do_listsApp.swift */,
+				B1AAF2222ABD432B001CC90A /* ListViewByDate.swift */,
 				B15A5EE329E955E20016BF84 /* ContentView.swift */,
+				B1AAF2202ABD3DBE001CC90A /* ListView.swift */,
+				B1AAF21E2ABD2A2B001CC90A /* addItemView.swift */,
+				B1AAF21C2ABD22B1001CC90A /* SortingFunction.swift */,
 				B15A5EF729EACC6A0016BF84 /* newLists.swift */,
 				B15A5EF529EACBCF0016BF84 /* FileManager - document directory.swift */,
 				B15A5EE529E955E40016BF84 /* Assets.xcassets */,
@@ -150,7 +162,11 @@
 				B15A5EF629EACBCF0016BF84 /* FileManager - document directory.swift in Sources */,
 				B15A5EE429E955E20016BF84 /* ContentView.swift in Sources */,
 				B15A5EF829EACC6A0016BF84 /* newLists.swift in Sources */,
+				B1AAF2212ABD3DBF001CC90A /* ListView.swift in Sources */,
+				B1AAF21D2ABD22B1001CC90A /* SortingFunction.swift in Sources */,
 				B15A5EE229E955E20016BF84 /* To_do_listsApp.swift in Sources */,
+				B1AAF21F2ABD2A2C001CC90A /* addItemView.swift in Sources */,
+				B1AAF2232ABD432B001CC90A /* ListViewByDate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
