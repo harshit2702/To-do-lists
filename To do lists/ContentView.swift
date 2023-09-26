@@ -20,8 +20,8 @@ struct ContentView: View {
     
     @State private var isSortByDate = false
     @State private var selectedSortTag: newLists.tag? = nil
-    
-    @Environment(\.colorScheme) var colorScheme
+        
+    @AppStorage("theme") var theme: AppTheme = .light
         
     var body: some View {
         NavigationStack{
@@ -92,13 +92,13 @@ struct ContentView: View {
             .toolbar(){
                 Menu{
                     Button{
-                        if colorScheme == .light {
-                            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .dark
+                        if theme == .light {
+                            theme = .dark
                         } else {
-                            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .light
+                            theme = .light
                         }
                     }label: {
-                        if(colorScheme == .light) {
+                        if(theme == .light) {
                             HStack{
                                 Text("Light" )
                                 Image(systemName: "sun.max.circle")
@@ -164,6 +164,7 @@ struct ContentView: View {
                 }
             }
         }
+        .preferredColorScheme(theme.colorScheme)
     }
     func deleteItems(at offsets: IndexSet) {
         newlists.remove(atOffsets: offsets)
@@ -200,6 +201,7 @@ struct ContentView: View {
             //No biometrics
         }
     }
+
 }
 
 
