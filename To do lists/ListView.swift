@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ListView: View {
     @Binding var newlists: [newLists]
+    @Binding var filteredItems: [newLists]
+    
     @Binding var isUnlocked: Bool
-
+    
     var body: some View {
         List{
-            ForEach(newlists) { list in
+            ForEach(filteredItems) { list in
                 if(isUnlocked || !list.isprivate) {
                     HStack {
                         if list.tag != newLists.tag.none {
@@ -57,11 +59,13 @@ struct ListView: View {
     }
     
     func deleteItems(at offsets: IndexSet) {
-        newlists.remove(atOffsets: offsets)
-        save(newlists)
+        for offset in offsets{
+            let item = filteredItems[offset]
+            if let index = newlists.firstIndex(where: {$0.id == item.id}){
+                newlists.remove(at: index)
+                filteredItems.remove(at: offset)
+            }
+            save(newlists)
         }
+    }
 }
-
-//#Preview {
-//    ListView(newlists: <#Binding<[newLists]>#>, isUnlocked: <#Binding<Bool>#>)
-//}

@@ -11,9 +11,8 @@ import LocalAuthentication
 struct ContentView: View {
 
     @State private var newlists = [newLists]()
-    @State private var unfilteredItemList = [newLists]()
+    @State private var filteredItemList = [newLists]()
     @State private var isPresented = false
-    @State private var toggleSwitch = false
 
     @State private var showingAlert = false
     
@@ -28,7 +27,7 @@ struct ContentView: View {
         NavigationStack{
             ZStack {
                 if(!isSortByDate){
-                    ListView(newlists: $newlists, isUnlocked: $isUnlocked)
+                    ListView(newlists: $newlists, filteredItems: $filteredItemList, isUnlocked: $isUnlocked)
                 }else{
                     ListViewByDate(newlists: $newlists, isUnlocked: $isUnlocked)
                 }
@@ -63,16 +62,16 @@ struct ContentView: View {
                 do {
                     let data = try Data(contentsOf: savedPath)
                     newlists = try JSONDecoder().decode([newLists].self, from: data)
-                    unfilteredItemList = newlists
+                    filteredItemList = newlists
                 } catch {
                     print("Error loading data: \(error)")
                 }
             }
-            .onChange(of: toggleSwitch){ _ in
+            .onChange(of: isSortByDate){ _ in
                 do {
                     let data = try Data(contentsOf: savedPath)
                     newlists = try JSONDecoder().decode([newLists].self, from: data)
-                    unfilteredItemList = newlists
+                    filteredItemList = newlists
                 } catch {
                     print("Error loading data: \(error)")
                 }
@@ -81,13 +80,13 @@ struct ContentView: View {
                 do {
                     let data = try Data(contentsOf: savedPath)
                     newlists = try JSONDecoder().decode([newLists].self, from: data)
-                    unfilteredItemList = newlists
+                    sortTasks()
                 } catch {
                     print("Error loading data: \(error)")
                 }
             }
             .onChange(of: selectedSortTag) { _ in
-                unfilteredItemList = newlists
+                filteredItemList = newlists
                 sortTasks()
             }
             .toolbar(){
@@ -134,13 +133,15 @@ struct ContentView: View {
                     }
                     Menu{
                         ForEach(newLists.tag.allCases, id: \.self) { tag in
-                            Button("\(tag.rawValue)"){
-                                selectedSortTag = tag
+                            if tag.rawValue != "none" {
+                                Button("\(tag.rawValue)"){
+                                    selectedSortTag = tag
+                                }
                             }
                         }
-                        Button("Nil"){
+                        Button("All"){
                             selectedSortTag = nil
-                            unfilteredItemList = newlists
+                            filteredItemList = newlists
                         }
                     }label:{
                         Text("Sort By Tag")
@@ -167,18 +168,16 @@ struct ContentView: View {
     func deleteItems(at offsets: IndexSet) {
         newlists.remove(atOffsets: offsets)
         save(newlists)
-        toggleSwitch.toggle()
         }
     func delete(){
         newlists.removeAll()
         save(newlists)
-        toggleSwitch.toggle()
     }
 
     func sortTasks() {
         if selectedSortTag != nil{
             if let selectedSortTag = selectedSortTag {
-                unfilteredItemList = newlists.filter { $0.tag == selectedSortTag }
+                filteredItemList = newlists.filter { $0.tag == selectedSortTag }
             }
         }
     }
