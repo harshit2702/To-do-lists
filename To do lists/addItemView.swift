@@ -11,7 +11,8 @@ struct addItemView: View {
     @State private var newItems = ""
     @State private var _isprivate = false
     @State private var selectedTag: newLists.tag = .none
-    @State private var newlists = [newLists]()
+    @State private var date = Date()
+    @Binding var newlists: [newLists]
     
     @Binding var isPresented: Bool
     
@@ -21,44 +22,32 @@ struct addItemView: View {
                 Form {
                     TextField("Enter Items",text: $newItems)
                     
+                    Section("Set Date"){
+                        DatePicker("Select a Date", selection: $date, displayedComponents: .date)
+                    }
+                    
+                    Section("Tag"){
+                        Picker("Select Tag", selection: $selectedTag) {
+                            ForEach(newLists.tag.allCases, id: \.self) { tag in
+                                Text(tag.rawValue)
+                                    .tag(tag) // Assign the tag as the value
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                    
                     Section("Privacy"){
                         Toggle(isOn: $_isprivate){
                             Text("Private item")
                         }
                         .toggleStyle(SwitchToggleStyle(tint: .blue))
                     }
-                    
-                    Section("Tag"){
-                        Picker("Select Tag", selection: $selectedTag) {
-                            ForEach(newLists.tag.allCases, id: \.self) { tag in
-                                HStack(alignment: .center){
-                                    if tag != newLists.tag.none {
-                                        Circle()
-                                            .fill(Color(tag.rawValue))
-                                            .frame(width: 20, height: 20)
-                                    }
-                                    else{
-                                        ZStack{
-                                            Circle()
-                                                .frame(width: 20.0)
-                                                .foregroundColor(.black)
-                                            Circle()
-                                                .frame(width: 17.0)
-                                                .foregroundColor(.white)
-                                        }
-                                    }
-                                    Text(tag.rawValue)
-                                        .tag(tag) // Assign the tag as the value
-                                }
-                            }
-                        }
-                        .pickerStyle(WheelPickerStyle())
-                    }
+
 
                 }
                 if(newItems != ""){
                     Button("save"){
-                        let item = newLists(name: newItems, isprivate: _isprivate, date: Date(), tag: selectedTag)
+                        let item = newLists(name: newItems, isprivate: _isprivate, date: date, tag: selectedTag)
                         newlists.insert(item, at: newlists.startIndex)
                         save(newlists)
                         newItems = ""
