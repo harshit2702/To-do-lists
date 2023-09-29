@@ -13,6 +13,9 @@ struct ListView: View {
     
     @Binding var isUnlocked: Bool
     
+    @State private var selectedItem = newLists(name: "demo", isprivate: false, date: Date(), tag: .none)
+    @Binding var presentEditView: Bool
+    
     var body: some View {
         List{
             ForEach(filteredItems) { list in
@@ -34,7 +37,6 @@ struct ListView: View {
                             }
                         }
                         
-            
                         VStack(alignment: .leading) {
                             Text(list.name)
                                 .font(.title)
@@ -52,9 +54,16 @@ struct ListView: View {
                                 .fontWeight(.bold)
                         }
                     }
+                    .onLongPressGesture {
+                        selectedItem = list
+                        presentEditView = true
+                    }
                 }
             }
             .onDelete(perform: deleteItems)
+            .sheet(isPresented: $presentEditView) {
+                EditView(item: $selectedItem, newlists: $newlists, presentEditView: $presentEditView)
+            }
         }
     }
     
