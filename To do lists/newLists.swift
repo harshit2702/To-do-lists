@@ -10,9 +10,9 @@ import Foundation
 
 struct newLists: Identifiable, Encodable, Decodable{
     var id = UUID()
-    let name: String
-    let isprivate: Bool
-    let date: Date
+    var name: String
+    var isprivate: Bool
+    var date: Date
     var tag: tag
     
     enum tag: String, CaseIterable,Codable{
