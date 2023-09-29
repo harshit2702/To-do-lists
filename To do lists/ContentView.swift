@@ -18,7 +18,9 @@ struct ContentView: View {
     
     @State private var isUnlocked = false
     
-    @State private var isSortByDate = false
+    @State private var presentEditView = false
+    
+    @AppStorage("sortDate") var isSortByDate = false
     @State private var selectedSortTag: newLists.tag? = nil
         
     @AppStorage("theme") var theme: AppTheme = .light
@@ -27,7 +29,10 @@ struct ContentView: View {
         NavigationStack{
             ZStack {
                 if(!isSortByDate){
-                    ListView(newlists: $newlists, filteredItems: $filteredItemList, isUnlocked: $isUnlocked)
+                    withAnimation{
+                        ListView(newlists: $newlists, filteredItems: $filteredItemList, isUnlocked: $isUnlocked, presentEditView: $presentEditView)
+
+                    }
                 }else{
                     ListViewByDate(newlists: $newlists, isUnlocked: $isUnlocked)
                 }
@@ -53,7 +58,7 @@ struct ContentView: View {
             }
             .navigationTitle("To do list")
             .sheet(isPresented: $isPresented){
-                addItemView(isPresented: $isPresented)
+                addItemView(newlists: $newlists, isPresented: $isPresented)
             }
             .onTapGesture{
                 isPresented = true
@@ -76,16 +81,15 @@ struct ContentView: View {
                     print("Error loading data: \(error)")
                 }
             }
-            .onChange(of: isPresented){ _ in
-                do {
-                    let data = try Data(contentsOf: savedPath)
-                    newlists = try JSONDecoder().decode([newLists].self, from: data)
-                    sortTasks()
-                } catch {
-                    print("Error loading data: \(error)")
-                }
-            }
             .onChange(of: selectedSortTag) { _ in
+                filteredItemList = newlists
+                sortTasks()
+            }
+            .onChange(of: presentEditView) { _ in
+                filteredItemList = newlists
+                sortTasks()
+            }
+            .onChange(of: isPresented) { _ in
                 filteredItemList = newlists
                 sortTasks()
             }
@@ -134,14 +138,28 @@ struct ContentView: View {
                     Menu{
                         ForEach(newLists.tag.allCases, id: \.self) { tag in
                             if tag.rawValue != "none" {
-                                Button("\(tag.rawValue)"){
+                                Button{
                                     selectedSortTag = tag
+                                }label: {
+                                    HStack{
+                                        Text("\(tag.rawValue)")
+                                        if(selectedSortTag == tag){
+                                            Image(systemName: "checkmark" )
+                                        }
+                                    }
                                 }
                             }
                         }
-                        Button("All"){
+                        Button{
                             selectedSortTag = nil
                             filteredItemList = newlists
+                        }label:{
+                            HStack {
+                                Text("All")
+                                if(selectedSortTag == nil){
+                                    Image(systemName: "checkmark" )
+                                }
+                            }
                         }
                     }label:{
                         Text("Sort By Tag")
@@ -166,13 +184,12 @@ struct ContentView: View {
         }
         .preferredColorScheme(theme.colorScheme)
     }
-    func deleteItems(at offsets: IndexSet) {
-        newlists.remove(atOffsets: offsets)
-        save(newlists)
-        }
     func delete(){
-        newlists.removeAll()
+        withAnimation {
+            newlists.removeAll()
+        }
         save(newlists)
+        filteredItemList = newlists
     }
 
     func sortTasks() {
