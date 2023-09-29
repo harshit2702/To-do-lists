@@ -58,7 +58,7 @@ struct addItemView: View {
                     }
                 }
             }
-            .navigationBarTitle("Tasks")
+            .navigationTitle("Tasks")
             .onAppear {
                 do {
                     let data = try Data(contentsOf: savedPath)
