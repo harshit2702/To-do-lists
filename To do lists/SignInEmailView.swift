@@ -11,29 +11,30 @@ final class signInEmail: ObservableObject{
     @Published var email = ""
     @Published var password = ""
     
-    func signIn(){
+    func signUp() async throws {
         guard !email.isEmpty, !password.isEmpty else{
             print("Enter Valid Email Password")
             return
         }
-        
-        Task{
-            do {
-                let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
-                print(returnedUserData)
-            } catch {
-                // Handle the error, for example, by displaying an error message to the user
-                print("Error: \(error)")
-            }
-        }
-
-        
+        let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
+        print(returnedUserData)
     }
+    
+    func signIn() async throws {
+        guard !email.isEmpty, !password.isEmpty else{
+            print("Enter Valid Email Password")
+            return
+        }
+        let returnedUserData = try await AuthenticationManager.shared.signInUser(email: email, password: password)
+        print(returnedUserData)
+    }
+    
 }
 
 struct SignInEmailView: View {
 
     @StateObject private var viewModel  =  signInEmail()
+    @Binding var showSignInView: Bool
     
     var body: some View {
         VStack{
@@ -48,9 +49,36 @@ struct SignInEmailView: View {
                 .cornerRadius(10)
             
             Button{
-                viewModel.signIn()
+                Task {
+                    do {
+                        try await viewModel.signUp()
+                        showSignInView = false
+                    }catch{
+                        
+                    }
+                    
+                }
             }label: {
-                Text("Sign in")
+                Text("Sign Up")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(height: 55)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+            }
+            Button{
+                Task {
+                    do {
+                        try await viewModel.signIn()
+                        showSignInView = false
+                    }catch{
+                        
+                    }
+                    
+                }
+            }label: {
+                Text("Log In")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(height: 55)
@@ -67,6 +95,6 @@ struct SignInEmailView: View {
 
 #Preview {
     NavigationStack{
-        SignInEmailView()
+        SignInEmailView(showSignInView: .constant(false))
     }
 }
