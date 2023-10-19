@@ -172,6 +172,15 @@ struct ContentView: View {
                             Image(systemName: "multiply.circle")
                         }
                     }
+                    NavigationLink{
+                        RootView()
+                    } label: {
+                        HStack{
+                            Text("Connect")
+                            Image(systemName: "gear")
+                                .font(.headline)
+                        }
+                    }
                 }label: {
                     Image(systemName: "line.3.horizontal")
                         .font(.title)

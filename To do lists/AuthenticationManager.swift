@@ -103,9 +103,11 @@ extension AuthenticationManager {
     
     func signInWithGoogle(credential: AuthCredential) async throws  -> AuthDataResultModel{
       let authDataResult =  try await Auth.auth().signIn(with: credential)
-        print("here")
-        print(authDataResult.user)
-        return AuthDataResultModel(user: authDataResult.user)
+        let authDataResultModel = AuthDataResultModel(user: authDataResult.user)
+        let user = dbUser(auth: authDataResultModel)
+        try await UserManager.shared.createNewUser(user: user)
+//        try await UserManager.shared.createNewUser(auth: authDataResultModel)
+        return authDataResultModel
     }
     
 }

@@ -29,6 +29,7 @@ struct EditView: View {
                                 Text(tag.rawValue).tag(tag)
                             }
                         }
+                        .pickerStyle(.menu)
                         
                         Toggle(isOn: $item.isprivate) {
                             Text("Private item")

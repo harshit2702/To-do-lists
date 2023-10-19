@@ -32,6 +32,9 @@ struct newLists: Identifiable, Encodable, Decodable{
                 }
         
     }
+    static func == (lhs: newLists, rhs: newLists) -> Bool {
+            return lhs.id == rhs.id
+        }
 }
 
 let savedPath = FileManager.documentDirectory.appendingPathComponent("SavedItems")
